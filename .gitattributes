@@ -1,0 +1,7 @@
+* text=auto eol=lf
+
+*.sh text eol=lf
+*.jar binary
+*.war binary
+*.zip binary
+*.jks binary

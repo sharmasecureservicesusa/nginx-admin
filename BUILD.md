@@ -121,6 +121,19 @@ Unauthenticated requests to `/` return HTTP 401 with the login page as the body;
 is the application's normal behaviour, not an error. Default credentials are
 `admin` / `admin`.
 
+## A separate latent problem: CRLF line endings
+
+46 files are committed with CRLF, including the four
+`nginx-admin-docker/release/*/build/install.sh` scripts. Those are `#!/bin/sh`
+scripts meant to be executed directly, and a CRLF shebang makes the kernel look for
+an interpreter whose name ends in `\r`, so they cannot run as committed. The
+`fixcrlf` Ant tasks in the two `*-standalone` POMs exist to work around the same
+issue for the packaged conf and scripts.
+
+Normalising the repository would touch roughly 170 files, so it is deliberately out
+of scope here; `.gitattributes` only pins the three scripts added alongside this
+document. It is worth doing on its own.
+
 ## Modernising the build
 
 The pinned toolchain above is the cheapest way to get a working build today and needs

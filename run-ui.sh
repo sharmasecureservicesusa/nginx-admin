@@ -36,18 +36,27 @@ mkdir -p "$RUNTIME_DIR/conf" "$RUNTIME_DIR/database" "$RUNTIME_DIR/log"
 # The packaged conf uses shell-style $NGINX_ADMIN_HOME references and an
 # /opt install prefix, but it is read as a plain java.util.Properties file.
 # Rewrite the paths that must be absolute and writable.
+#
+# NGINX_ADMIN_DB_LOCATION is the exception and must stay relative. Both
+# Main.urlConnection and DatabaseMigrationBuilder build the H2 URL as
+# "jdbc:h2:tcp://host:port/." + location + "/" + name, and that leading "/."
+# makes H2 resolve the path against the server process's working directory.
+# Feeding it an absolute location would create the tree a second time under
+# the current directory, so pass "/database" and start the JVM in RUNTIME_DIR.
 sed \
 	-e "s#^NGINX_ADMIN_HOME=.*#NGINX_ADMIN_HOME=$RUNTIME_DIR#" \
 	-e "s#^NGINX_ADMIN_BIN=.*#NGINX_ADMIN_BIN=$RUNTIME_DIR/bin#" \
 	-e "s#^NGINX_ADMIN_LOG=.*#NGINX_ADMIN_LOG=$RUNTIME_DIR/log#" \
 	-e "s#^NGINX_ADMIN_CONF=.*#NGINX_ADMIN_CONF=$RUNTIME_DIR/conf#" \
-	-e "s#^NGINX_ADMIN_DB_LOCATION=.*#NGINX_ADMIN_DB_LOCATION=$RUNTIME_DIR/database#" \
+	-e "s#^NGINX_ADMIN_DB_LOCATION=.*#NGINX_ADMIN_DB_LOCATION=/database#" \
 	"$CONF_TEMPLATE" > "$RUNTIME_DIR/conf/nginx-admin.conf"
 
 # H2 refuses to start against a stale lock left behind by a killed process.
 rm -f "$RUNTIME_DIR"/database/*.lock.db
 
 echo "[run-ui] starting $(basename "$SWARM_JAR") on http://localhost:4000"
+
+cd "$RUNTIME_DIR"
 
 exec "$JDK8_HOME/bin/java" \
 	-server \

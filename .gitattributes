@@ -1,7 +1,9 @@
-* text=auto eol=lf
-
-*.sh text eol=lf
-*.jar binary
-*.war binary
-*.zip binary
-*.jks binary
+# Scoped deliberately narrowly. 46 files in this repository are committed with
+# CRLF, so a repository-wide `text=auto eol=lf` would renormalize ~170 files and
+# bury any real change. That cleanup is worth doing, but on its own.
+#
+# These three scripts must stay LF: they are executed directly, and a CRLF
+# shebang makes the kernel look for an interpreter whose name ends in \r.
+/build.sh text eol=lf
+/run-ui.sh text eol=lf
+/.cursor/install.sh text eol=lf

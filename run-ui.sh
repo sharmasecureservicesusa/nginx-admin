@@ -51,7 +51,8 @@ sed \
 	-e "s#^NGINX_ADMIN_DB_LOCATION=.*#NGINX_ADMIN_DB_LOCATION=/database#" \
 	"$CONF_TEMPLATE" > "$RUNTIME_DIR/conf/nginx-admin.conf"
 
-# H2 refuses to start against a stale lock left behind by a killed process.
+# Defensive only. H2's MVStore keeps its lock inside the .mv.db file, so a killed
+# process leaves no stale lock, but the older PageStore format does use this file.
 rm -f "$RUNTIME_DIR"/database/*.lock.db
 
 echo "[run-ui] starting $(basename "$SWARM_JAR") on http://localhost:4000"

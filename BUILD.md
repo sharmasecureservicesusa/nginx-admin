@@ -119,7 +119,8 @@ WFSWARM99999: WildFly Swarm is Ready
 
 Unauthenticated requests to `/` return HTTP 401 with the login page as the body; this
 is the application's normal behaviour, not an error. Default credentials are
-`admin` / `admin`.
+`admin` / `admin`, and the first sign-in redirects to `/user/changePassword` before it
+will let you reach the dashboard.
 
 ## A separate latent problem: CRLF line endings
 

@@ -62,6 +62,21 @@ re-enabling plain HTTP. `build.sh` always passes that file with `-s`.
 Maven logs "The POM for ... is missing, no dependency information available". The jar
 resolves and the build succeeds.
 
+## Tests
+
+`./build.sh` skips tests by default, matching what `.travis.yml` did. There is one
+test class in the whole reactor, `nginx-admin-database`'s `DatabaseMigrateTest`, and
+both of its cases are integration tests with unguarded external dependencies:
+
+- `migrateMySql` connects to a MySQL server on `localhost:3306` with database
+  `migrate`. Without one it fails with `CommunicationsException`.
+- `migrateH2` binds an H2 TCP server on the hardcoded port 9123, which is the same
+  port `run-ui.sh` uses. It fails with `BindException` if the manager UI is running.
+
+So `./build.sh test` is only meaningful with MySQL available and the UI stopped. There
+is no unit-test coverage to speak of, which is worth knowing before relying on the
+build as a regression signal.
+
 ## What gets produced
 
 | Module | Artifact | Purpose |

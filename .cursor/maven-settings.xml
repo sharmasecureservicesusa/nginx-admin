@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+	<mirrors>
+		<!--
+			jasperreports 6.4.0 declares the Jaspersoft third-party repository over
+			plain HTTP. Maven 3.8+ blocks HTTP repositories outright, and it is not a
+			repository we control, so com.lowagie:itext:2.1.7.js5 (reachable only from
+			there) cannot be resolved without this mapping. The same repository serves
+			the artifact over HTTPS.
+		-->
+		<mirror>
+			<id>jaspersoft-third-party-https</id>
+			<mirrorOf>jaspersoft-third-party</mirrorOf>
+			<url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
+		</mirror>
+	</mirrors>
+
+</settings>
